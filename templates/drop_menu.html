@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop Tables - E-Commerce DBMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1>E-Commerce DBMS</h1>
+            <div class="navbar-right">
+                <a href="{{ url_for('menu') }}" class="btn btn-back">Back to Menu</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-danger">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <h2>Drop Tables</h2>
+        
+        <p style="margin-bottom: 20px; color: #666;">
+            Click on a table to delete it. <strong style="color: red;">WARNING: This action cannot be undone!</strong>
+        </p>
+
+        <div class="menu-grid">
+            <div class="menu-section">
+                <h3>User Tables</h3>
+                
+                <a href="{{ url_for('drop_single_table', table_name='A3_USERS') }}" class="menu-btn btn-danger" 
+                   onclick="return confirm('Delete A3_USERS table? WARNING: This will also delete related data.')">
+                    A3_USERS
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='UserName') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete UserName table?')">
+                    UserName
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='USERS_ADMIN') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete USERS_ADMIN table?')">
+                    USERS_ADMIN
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='USERS_SELLER') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete USERS_SELLER table?')">
+                    USERS_SELLER
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='USERS_CUSTOMER') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete USERS_CUSTOMER table?')">
+                    USERS_CUSTOMER
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h3>Product Tables</h3>
+                
+                <a href="{{ url_for('drop_single_table', table_name='CATEGORY') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete CATEGORY table?')">
+                    CATEGORY
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='PRODUCT') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete PRODUCT table?')">
+                    PRODUCT
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h3>Order & Payment Tables</h3>
+                
+                <a href="{{ url_for('drop_single_table', table_name='ORDERS') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete ORDERS table?')">
+                    ORDERS
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='PAYMENT') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete PAYMENT table?')">
+                    PAYMENT
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='ORDER_ITEM') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete ORDER_ITEM table?')">
+                    ORDER_ITEM
+                </a>
+                
+                <a href="{{ url_for('drop_single_table', table_name='ORDER_PRICE') }}" class="menu-btn btn-danger"
+                   onclick="return confirm('Delete ORDER_PRICE table?')">
+                    ORDER_PRICE
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h3>Batch Operations</h3>
+                
+                <a href="{{ url_for('drop_all_tables') }}" class="menu-btn btn-danger" 
+                   onclick="return confirm('Delete ALL tables? WARNING: This cannot be undone!')">
+                    Drop All Tables
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>E-Commerce DBMS | Database Management System</p>
+    </footer>
+</body>
+</html>

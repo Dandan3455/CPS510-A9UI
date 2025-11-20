@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - E-Commerce DBMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1>E-Commerce DBMS</h1>
+            <div class="navbar-right">
+                <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <h2>Database Management Menu</h2>
+        
+        <div class="menu-grid">
+            <div class="menu-section">
+                <h3>Table Structure</h3>
+                
+                <a href="{{ url_for('create_menu') }}" class="menu-btn btn-create">
+                    Create Tables
+                </a>
+                
+                <a href="{{ url_for('drop_menu') }}" class="menu-btn btn-danger">
+                    Drop Tables
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h3>Data Operations</h3>
+                
+                <a href="{{ url_for('populate_menu') }}" class="menu-btn btn-populate">
+                    Populate Sample Data
+                </a>
+                
+                <a href="{{ url_for('tables') }}" class="menu-btn btn-view">
+                    View All Tables
+                </a>
+            </div>
+
+            <div class="menu-section">
+                <h3>Query</h3>
+                
+                <a href="{{ url_for('query1') }}" class="menu-btn btn-query">
+                    Query 1: Product Average Prices
+                </a>
+                
+                <a href="{{ url_for('query2') }}" class="menu-btn btn-query">
+                    Query 2: Duplicate Product Names
+                </a>
+                
+                <a href="{{ url_for('query3') }}" class="menu-btn btn-query">
+                    Query 3: Sellers or Buyers
+                </a>
+                
+                <a href="{{ url_for('query4') }}" class="menu-btn btn-query">
+                    Query 4: Both Sellers and Buyers
+                </a>
+                
+                <a href="{{ url_for('query5') }}" class="menu-btn btn-query">
+                    Query 5: Buyers but Not Sellers
+                </a>
+                
+                <a href="{{ url_for('query6') }}" class="menu-btn btn-query">
+                    Query 6: Custom Query
+                </a>
+            </div>
+        </div>
+        
+    </div>
+
+    <footer>
+        <p>E-Commerce DBMS | Database: oracle12c.scs.ryerson.ca</p>
+    </footer>
+</body>
+</html>
