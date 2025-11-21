@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .customers-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .customers-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .customers-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .customers-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .customers-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .customers-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-view {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-toggle {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-left: 5px;
+        }
+        
+        .btn-toggle:hover {
+            background: #5a6268;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .customer-detail-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .detail-value {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .orders-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .order-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>E-Commerce System</h2>
+                <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                    Oracle: {{ db_user }}<br>
+                    Mode: Seller ({{ user_id }})<br>
+                    Store: {{ store_name }}
+                </p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+                <a href="{% url 'manage_products' %}" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    Manage Products
+                </a>
+                <a href="{% url 'manage_customers' %}" class="nav-item active">
+                    <span class="nav-icon">👥</span>
+                    Manage Customers
+                </a>
+                <a href="{% url 'manage_orders' %}" class="nav-item">
+                    <span class="nav-icon">🛒</span>
+                    Manage Orders
+                </a>
+                <a href="{% url 'switch_role' %}" class="nav-item">
+                    <span class="nav-icon">🔄</span>
+                    Switch Role
+                </a>
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                <h1>Manage Customers</h1>
+            </div>
+            <div class="content-body">
+                {% if error %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endif %}
+                
+                {% if customers %}
+                <div class="customers-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Total Orders</th>
+                                <th>Total Spent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers %}
+                            <tr>
+                                <td><strong>{{ customer.user_id }}</strong></td>
+                                <td>{{ customer.full_name }}</td>
+                                <td>{{ customer.email }}</td>
+                                <td>{{ customer.city }}, {{ customer.province }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ customer.status|lower }}">
+                                        {{ customer.status }}
+                                    </span>
+                                </td>
+                                <td>{{ customer.total_orders }}</td>
+                                <td>${{ customer.total_spent|floatformat:2 }}</td>
+                                <td>
+                                    <button class="btn-view" onclick="showCustomerDetail('{{ customer.user_id }}')">
+                                        👁️ View Details
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="no-data">
+                        <div style="font-size: 64px; margin-bottom: 20px;">👥</div>
+                        <h2>No Customers Found</h2>
+                        <p>There are no customers in the system yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customer Detail Modal -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCustomerModal()">&times;</span>
+            <h2 id="modalTitle">Customer Details</h2>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <script>
+        const customersData = {{ customers_json|safe }};
+        
+        function showCustomerDetail(userId) {
+            const customer = customersData.find(c => c.user_id === userId);
+            if (!customer) return;
+            
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="customer-detail-section">
+                    <div class="section-title">👤 Basic Information</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Customer ID</span>
+                            <span class="detail-value">${customer.user_id}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-value">${customer.full_name}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">${customer.email}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone</span>
+                            <span class="detail-value">${customer.phone}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">
+                                <span class="status-badge status-${customer.status.toLowerCase()}">
+                                    ${customer.status}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Date of Birth</span>
+                            <span class="detail-value">${customer.date_of_birth || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="customer-detail-section">
+                    <div class="section-title">📍 Location</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">City</span>
+                            <span class="detail-value">${customer.city}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Province</span>
+                            <span class="detail-value">${customer.province}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="customer-detail-section">
+                    <div class="section-title">🎫 Membership</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Membership ID</span>
+                            <span class="detail-value">${customer.membership_id}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="customer-detail-section">
+                    <div class="section-title">📊 Statistics</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Total Orders</span>
+                            <span class="detail-value" style="color: #667eea; font-size: 24px; font-weight: 700;">
+                                ${customer.total_orders}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Total Spent</span>
+                            <span class="detail-value" style="color: #28a745; font-size: 24px; font-weight: 700;">
+                                $${customer.total_spent.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('customerModal').style.display = 'block';
+        }
+        
+        function closeCustomerModal() {
+            document.getElementById('customerModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('customerModal');
+            if (event.target == modal) {
+                closeCustomerModal();
+            }
+        }
+    </script>
+</body>
+</html>

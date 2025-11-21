@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>E-Commerce System</h2>
+                {% if db_user %}
+                <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                    Oracle: {{ db_user }}<br>
+                    {% if user_type == 'CUSTOMER' %}
+                    Mode: Customer ({{ user_id }})
+                    {% else %}
+                    Mode: Seller ({{ user_id }})<br>
+                    Store: {{ store_name }}
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+            <nav class="sidebar-nav">
+                {% if user_type == 'CUSTOMER' %}
+                    <!-- Customer Menu -->
+                    <a href="{% url 'dashboard' %}" class="nav-item">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'browse_products' %}" class="nav-item">
+                        <span class="nav-icon">🛍️</span>
+                        Browse Products
+                    </a>
+                    <a href="{% url 'my_orders' %}" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Orders
+                    </a>
+                    <a href="{% url 'my_profile' %}" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        My Profile
+                    </a>
+                {% else %}
+                    <!-- Seller/Admin Menu -->
+                    <a href="{% url 'dashboard' %}" class="nav-item">
+                        <span class="nav-icon">🏠</span>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'manage_products' %}" class="nav-item">
+                        <span class="nav-icon">📦</span>
+                        Manage Products
+                    </a>
+                    <a href="{% url 'manage_customers' %}" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        Manage Customers
+                    </a>
+                    <a href="{% url 'manage_orders' %}" class="nav-item">
+                        <span class="nav-icon">🛒</span>
+                        Manage Orders
+                    </a>
+                {% endif %}
+                <a href="{% url 'switch_role' %}" class="nav-item">
+                    <span class="nav-icon">🔄</span>
+                    Switch Role
+                </a>
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                {% if user_type == 'CUSTOMER' %}
+                <h1>Welcome, Customer!</h1>
+                {% else %}
+                <h1>Welcome to {{ store_name }}!</h1>
+                {% endif %}
+            </div>
+            <div class="content-body">
+                <div class="dashboard-cards">
+                    {% if user_type == 'CUSTOMER' %}
+                        <!-- Customer Statistics -->
+                        <div class="card">
+                            <h3>My Orders</h3>
+                            <p class="card-number">{{ orders_count }}</p>
+                            <a href="{% url 'my_orders' %}" class="card-link">View My Orders →</a>
+                        </div>
+                        <div class="card">
+                            <h3>Products Purchased</h3>
+                            <p class="card-number">{{ products_purchased }}</p>
+                            <a href="{% url 'my_orders' %}" class="card-link">View Details →</a>
+                        </div>
+                        <div class="card">
+                            <h3>Available Products</h3>
+                            <p class="card-number">{{ total_products }}</p>
+                            <a href="{% url 'browse_products' %}" class="card-link">Browse Products →</a>
+                        </div>
+                        <div class="card">
+                            <h3>My Profile</h3>
+                            <p class="card-number">{{ user_id }}</p>
+                            <a href="{% url 'my_profile' %}" class="card-link">View Profile →</a>
+                        </div>
+                    {% else %}
+                        <!-- Seller Statistics -->
+                        <div class="card">
+                            <h3>My Products</h3>
+                            <p class="card-number">{{ products_count }}</p>
+                            <a href="{% url 'manage_products' %}" class="card-link">Manage Products →</a>
+                        </div>
+                        <div class="card">
+                            <h3>My Customers</h3>
+                            <p class="card-number">{{ customers_count }}</p>
+                            <a href="{% url 'manage_customers' %}" class="card-link">View Customers →</a>
+                        </div>
+                        <div class="card">
+                            <h3>My Orders</h3>
+                            <p class="card-number">{{ orders_count }}</p>
+                            <a href="{% url 'manage_orders' %}" class="card-link">View Orders →</a>
+                        </div>
+                        <div class="card">
+                            <h3>Total Revenue</h3>
+                            <p class="card-number">${{ total_revenue|floatformat:2 }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

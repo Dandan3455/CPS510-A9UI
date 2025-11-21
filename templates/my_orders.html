@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+        
+        .order-id {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .order-date {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .order-status {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-shipped {
+            background: #3498db;
+            color: white;
+        }
+        
+        .status-delivered {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status-transit {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .status-paid {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .order-items {
+            margin: 20px 0;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .item-meta {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .item-price {
+            text-align: right;
+        }
+        
+        .item-subtotal {
+            font-size: 18px;
+            font-weight: 600;
+            color: #27ae60;
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+            margin-top: 15px;
+        }
+        
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .total-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60;
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+        
+        .no-orders-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>E-Commerce System</h2>
+                <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                    Oracle: {{ db_user }}<br>
+                    Mode: Customer ({{ user_id }})
+                </p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+                <a href="{% url 'browse_products' %}" class="nav-item">
+                    <span class="nav-icon">🛍️</span>
+                    Browse Products
+                </a>
+                <a href="{% url 'my_orders' %}" class="nav-item active">
+                    <span class="nav-icon">📋</span>
+                    My Orders
+                </a>
+                <a href="{% url 'my_profile' %}" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    My Profile
+                </a>
+                <a href="{% url 'switch_role' %}" class="nav-item">
+                    <span class="nav-icon">🔄</span>
+                    Switch Role
+                </a>
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                <h1>My Orders</h1>
+            </div>
+            <div class="content-body">
+                {% if error %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endif %}
+                
+                {% if orders %}
+                    {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #{{ order.order_id }}</div>
+                                <div class="order-date">Placed on: {{ order.order_date|date:"F d, Y" }}</div>
+                            </div>
+                            <div class="order-status">
+                                <span class="status-badge status-{{ order.shipment_status|lower }}">
+                                    📦 {{ order.shipment_status }}
+                                </span>
+                                <span class="status-badge status-{{ order.payment_status|lower }}">
+                                    💳 {{ order.payment_status }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="order-items">
+                            {% for item in order.items %}
+                            <div class="order-item">
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.product_name }}</div>
+                                    <div class="item-meta">
+                                        Product ID: {{ item.product_id }} | 
+                                        Quantity: {{ item.quantity }} | 
+                                        Unit Price: ${{ item.unit_price }}
+                                    </div>
+                                </div>
+                                <div class="item-price">
+                                    <div class="item-subtotal">${{ item.subtotal }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="order-total">
+                            <span class="total-label">Total Amount:</span>
+                            <span class="total-amount">${{ order.total_amount }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-orders">
+                        <div class="no-orders-icon">📋</div>
+                        <h2>No Orders Yet</h2>
+                        <p>Start shopping to see your orders here!</p>
+                        <a href="{% url 'browse_products' %}" class="btn btn-primary" style="margin-top: 20px;">Browse Products</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

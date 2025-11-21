@@ -3,54 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - E-Commerce DBMS</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Login - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="login-container">
         <div class="login-box">
-            <h1>E-Commerce DBMS</h1>
-            <h2>Database Management System</h2>
-            
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <div class="alert alert-danger">
-                        {% for message in messages %}
-                            <p>Error: {{ message }}</p>
-                        {% endfor %}
+            <h1>E-Commerce Management System</h1>
+            <h2>Login</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
                     </div>
-                {% endif %}
-            {% endwith %}
-            
-            <form method="POST" class="login-form">
+                {% endfor %}
+            {% endif %}
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        name="username" 
-                        placeholder="Enter Oracle username" 
-                        required
-                    >
+                    <label for="username">Oracle Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter your Oracle username" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="Enter Oracle password" 
-                        required
-                    >
+                    <label for="password">Oracle Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your Oracle password" required>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn-login">Login & Initialize Database</button>
             </form>
-            
-            <div class="login-info">
-                <p>Database: oracle12c.scs.ryerson.ca</p>
-            </div>
+            <p class="hint">Use your school Oracle database credentials</p>
+            <p class="hint">Login will automatically create tables and insert sample data</p>
         </div>
     </div>
 </body>

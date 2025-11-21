@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Products - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .product-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .product-id {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .product-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+        
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60;
+        }
+        
+        .product-stock {
+            color: #e67e22;
+            font-weight: 600;
+        }
+        
+        .product-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .seller-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+        
+        .no-products-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>E-Commerce System</h2>
+                <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                    Oracle: {{ db_user }}<br>
+                    Mode: Customer ({{ user_id }})
+                </p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+                <a href="{% url 'browse_products' %}" class="nav-item active">
+                    <span class="nav-icon">🛍️</span>
+                    Browse Products
+                </a>
+                <a href="{% url 'my_orders' %}" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    My Orders
+                </a>
+                <a href="{% url 'my_profile' %}" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    My Profile
+                </a>
+                <a href="{% url 'switch_role' %}" class="nav-item">
+                    <span class="nav-icon">🔄</span>
+                    Switch Role
+                </a>
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                <h1>Browse Products</h1>
+            </div>
+            <div class="content-body">
+                {% if error %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endif %}
+                
+                {% if products %}
+                    <div class="product-grid">
+                        {% for product in products %}
+                        <div class="product-card">
+                            <div class="product-header">
+                                <div class="product-name">{{ product.name }}</div>
+                                <div class="product-id">ID: {{ product.product_id }}</div>
+                            </div>
+                            
+                            <div class="product-description">
+                                {{ product.description }}
+                            </div>
+                            
+                            <div class="product-info">
+                                <div class="info-row">
+                                    <span class="info-label">Price:</span>
+                                    <span class="product-price">${{ product.price }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Stock:</span>
+                                    <span class="product-stock">{{ product.stock }} available</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Category:</span>
+                                    <span class="product-category">{{ product.category }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="seller-info">
+                                🏪 {{ product.store_name }}<br>
+                                👤 Seller: {{ product.seller_name }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-products">
+                        <div class="no-products-icon">📦</div>
+                        <h2>No Products Available</h2>
+                        <p>Check back later for new products!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

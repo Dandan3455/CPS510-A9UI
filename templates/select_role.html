@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Role - E-Commerce System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .role-selection-container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .role-selection-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .role-selection-header h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .role-selection-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .role-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .role-section:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.1);
+        }
+        
+        .role-section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .role-icon {
+            font-size: 24px;
+        }
+        
+        .role-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .role-options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .role-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .role-option:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+        
+        .role-option input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .role-option-label {
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .role-option-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .role-option-detail {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-continue {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-continue:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-logout {
+            padding: 12px 40px;
+            background: white;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="role-selection-container">
+        <div class="role-selection-header">
+            <h1>Welcome to E-Commerce System</h1>
+            <p>Please select your role to continue</p>
+            <p style="font-size: 13px; color: #95a5a6; margin-top: 10px; font-style: italic;">
+                Note: In a real system, user roles would be automatically determined upon login. 
+                This manual role selection is implemented for demonstration purposes and to accommodate 
+                the Oracle database environment.
+            </p>
+        </div>
+        
+        <form method="POST" action="{% url 'set_role' %}" id="roleForm">
+            {% csrf_token %}
+            
+            <!-- Customer Section -->
+            <div class="role-section">
+                <div class="role-section-title">
+                    <span class="role-icon">👤</span>
+                    Customer Mode
+                </div>
+                <div class="role-description">
+                    Browse products, manage orders, and enjoy shopping experience
+                </div>
+                <div class="role-options">
+                    <label class="role-option">
+                        <input type="radio" name="role" value="CUSTOMER:CUS1">
+                        <div class="role-option-label">
+                            <div class="role-option-name">CUS1 - Decor Delights</div>
+                            <div class="role-option-detail">Decor@hotmail.com • Toronto, ON</div>
+                        </div>
+                    </label>
+                    
+                    <label class="role-option">
+                        <input type="radio" name="role" value="CUSTOMER:CUS2">
+                        <div class="role-option-label">
+                            <div class="role-option-name">CUS2 - Emily Brown</div>
+                            <div class="role-option-detail">emily.brown@gmail.com • Toronto, ON</div>
+                        </div>
+                    </label>
+                    
+                    <label class="role-option">
+                        <input type="radio" name="role" value="CUSTOMER:CUS3">
+                        <div class="role-option-label">
+                            <div class="role-option-name">CUS3 - Alexander Garcia</div>
+                            <div class="role-option-detail">alex.garcia@yahoo.com • Toronto, ON</div>
+                        </div>
+                    </label>
+                    
+                    <label class="role-option">
+                        <input type="radio" name="role" value="CUSTOMER:CUS4">
+                        <div class="role-option-label">
+                            <div class="role-option-name">CUS4 - Bella Jones</div>
+                            <div class="role-option-detail">bella.jones@hotmail.com • Toronto, ON</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Seller Section -->
+            <div class="role-section">
+                <div class="role-section-title">
+                    <span class="role-icon">🏪</span>
+                    Seller Mode
+                </div>
+                <div class="role-description">
+                    Manage your store's products, view orders, and track sales
+                </div>
+                <div class="role-options">
+                    {% for seller in sellers %}
+                    <label class="role-option">
+                        <input type="radio" name="role" value="SELLER:{{ seller.user_id }}">
+                        <div class="role-option-label">
+                            <div class="role-option-name">{{ seller.user_id }} - {{ seller.store_name }}</div>
+                            <div class="role-option-detail">{{ seller.full_name }} • {{ seller.email }} • {{ seller.city }}, {{ seller.province }}</div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button type="submit" class="btn-continue" id="continueBtn" disabled>Continue</button>
+                <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Enable continue button when a role is selected
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const continueBtn = document.getElementById('continueBtn');
+        
+        roleInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                continueBtn.disabled = false;
+            });
+        });
+        
+        // Highlight selected option
+        roleInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                document.querySelectorAll('.role-option').forEach(opt => {
+                    opt.style.borderColor = 'transparent';
+                    opt.style.background = '#f8f9fa';
+                });
+                
+                const parent = input.closest('.role-option');
+                parent.style.borderColor = '#3498db';
+                parent.style.background = '#e3f2fd';
+            });
+        });
+    </script>
+</body>
+</html>

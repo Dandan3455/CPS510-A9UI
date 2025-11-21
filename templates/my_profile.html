@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - E-Commerce System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .profile-header {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 25px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 15px;
+        }
+        
+        .profile-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .profile-id {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+        
+        .profile-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .profile-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .info-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .info-value.highlight {
+            color: #3498db;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>E-Commerce System</h2>
+                <p style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                    Oracle: {{ db_user }}<br>
+                    Mode: Customer ({{ user_id }})
+                </p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    Dashboard
+                </a>
+                <a href="{% url 'browse_products' %}" class="nav-item">
+                    <span class="nav-icon">🛍️</span>
+                    Browse Products
+                </a>
+                <a href="{% url 'my_orders' %}" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    My Orders
+                </a>
+                <a href="{% url 'my_profile' %}" class="nav-item active">
+                    <span class="nav-icon">👤</span>
+                    My Profile
+                </a>
+                <a href="{% url 'switch_role' %}" class="nav-item">
+                    <span class="nav-icon">🔄</span>
+                    Switch Role
+                </a>
+                <a href="{% url 'logout' %}" class="nav-item logout">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                <h1>My Profile</h1>
+                <button onclick="showEditModal()" class="btn-add" style="margin-top: 10px;">
+                    ✏️ Edit Profile
+                </button>
+            </div>
+            <div class="content-body">
+                {% if error %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endif %}
+                
+                {% if profile %}
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">👤</div>
+                            <div class="profile-name">{{ profile.full_name }}</div>
+                            <div class="profile-id">Customer ID: {{ profile.user_id }}</div>
+                            <span class="profile-status status-{{ profile.status|lower }}">
+                                {{ profile.status }}
+                            </span>
+                        </div>
+                        
+                        <div class="profile-section">
+                            <div class="section-title">📧 Contact Information</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value highlight">{{ profile.email }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Phone</span>
+                                    <span class="info-value">{{ profile.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-section">
+                            <div class="section-title">📍 Address</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Street</span>
+                                    <span class="info-value">{{ profile.street }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">City</span>
+                                    <span class="info-value">{{ profile.city }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Province</span>
+                                    <span class="info-value">{{ profile.province }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Postal Code</span>
+                                    <span class="info-value">{{ profile.postal_code }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-section">
+                            <div class="section-title">🎫 Membership Details</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Membership ID</span>
+                                    <span class="info-value highlight">{{ profile.membership_id }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Date of Birth</span>
+                                    <span class="info-value">
+                                        {% if profile.date_of_birth != 'N/A' %}
+                                            {{ profile.date_of_birth|date:"F d, Y" }}
+                                        {% else %}
+                                            {{ profile.date_of_birth }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                    <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">⚠️</div>
+                        <h2>Profile Not Found</h2>
+                        <p>Unable to load profile information.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Profile Modal -->
+    {% if profile %}
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form method="post" action="{% url 'edit_profile' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ profile.full_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" value="{{ profile.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" name="phone" value="{{ profile.phone }}">
+                </div>
+                <div class="form-group">
+                    <label for="street">Street</label>
+                    <input type="text" id="street" name="street" value="{{ profile.street }}">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" value="{{ profile.city }}">
+                </div>
+                <div class="form-group">
+                    <label for="province">Province</label>
+                    <input type="text" id="province" name="province" value="{{ profile.province }}">
+                </div>
+                <div class="form-group">
+                    <label for="postal_code">Postal Code</label>
+                    <input type="text" id="postal_code" name="postal_code" value="{{ profile.postal_code }}">
+                </div>
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" 
+                           value="{% if profile.date_of_birth != 'N/A' %}{{ profile.date_of_birth|date:'Y-m-d' }}{% endif %}">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" onclick="closeEditModal()" class="btn-cancel">Cancel</button>
+                    <button type="submit" class="btn-add">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    <script>
+        function showEditModal() {
+            document.getElementById('editModal').style.display = 'block';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>
