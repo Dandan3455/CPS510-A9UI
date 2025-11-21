@@ -35,7 +35,7 @@ Then open your browser and visit: **http://127.0.0.1:8000/**
 
 ### Prerequisites
 - Python 3.8+ (download from python.org if needed)
-- University Oracle account credentials
+- TMU Oracle account credentials
 - School VPN connection
 
 ---
@@ -44,7 +44,7 @@ Then open your browser and visit: **http://127.0.0.1:8000/**
 
 ### Login
 1. Open browser at **http://127.0.0.1:8000/**
-2. Enter your Oracle username and password (e.g., d53liu)
+2. Enter your Oracle username and password
 3. First login automatically creates database tables and sample data
 
 ### Select Role
