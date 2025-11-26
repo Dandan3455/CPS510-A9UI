@@ -269,23 +269,23 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <input type="text" id="phone" name="phone" value="{{ profile.phone }}">
+                    <input type="text" id="phone" name="phone" value="{% if profile.phone != 'N/A' and profile.phone != '-' %}{{ profile.phone }}{% endif %}">
                 </div>
                 <div class="form-group">
                     <label for="street">Street</label>
-                    <input type="text" id="street" name="street" value="{{ profile.street }}">
+                    <input type="text" id="street" name="street" value="{% if profile.street != 'N/A' and profile.street != '-' %}{{ profile.street }}{% endif %}">
                 </div>
                 <div class="form-group">
                     <label for="city">City</label>
-                    <input type="text" id="city" name="city" value="{{ profile.city }}">
+                    <input type="text" id="city" name="city" value="{% if profile.city != 'N/A' and profile.city != '-' %}{{ profile.city }}{% endif %}">
                 </div>
                 <div class="form-group">
                     <label for="province">Province</label>
-                    <input type="text" id="province" name="province" value="{{ profile.province }}">
+                    <input type="text" id="province" name="province" value="{% if profile.province != 'N/A' and profile.province != '-' %}{{ profile.province }}{% endif %}">
                 </div>
                 <div class="form-group">
                     <label for="postal_code">Postal Code</label>
-                    <input type="text" id="postal_code" name="postal_code" value="{{ profile.postal_code }}">
+                    <input type="text" id="postal_code" name="postal_code" value="{% if profile.postal_code != 'N/A' and profile.postal_code != '-' %}{{ profile.postal_code }}{% endif %}">
                 </div>
                 <div class="form-group">
                     <label for="date_of_birth">Date of Birth</label>

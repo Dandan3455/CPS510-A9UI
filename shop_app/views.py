@@ -361,10 +361,6 @@ def populate_tables(cursor, connection):
             INSERT INTO ORDERS (order_id, customer_id, order_date, shipment_status)
             VALUES ('O006', 'CUS1', DATE '2025-05-03', 'Delivered')
         """)
-        cursor.execute("""
-            INSERT INTO ORDERS (order_id, customer_id, order_date, shipment_status)
-            VALUES ('O007', 'CUS1', DATE '2025-10-01', 'Delivered')
-        """)
 
         # PAYMENT
         cursor.execute("INSERT INTO PAYMENT (payment_id, order_id, payment_status, total_amount) VALUES ('EFT0001', 'O001', 'Paid', 31.98)")
@@ -381,19 +377,6 @@ def populate_tables(cursor, connection):
         cursor.execute("INSERT INTO ORDER_ITEM (order_id, product_id, quantity) VALUES ('O004', 'P0004', 2)")
         cursor.execute("INSERT INTO ORDER_ITEM (order_id, product_id, quantity) VALUES ('O005', 'P0005', 4)")
         cursor.execute("INSERT INTO ORDER_ITEM (order_id, product_id, quantity) VALUES ('O006', 'P0001', 5)")
-        
-        # S1 is also customer (query4)
-        cursor.execute("INSERT INTO USERS_CUSTOMER (customer_id, membership_id, date_of_birth) "
-               "VALUES ('S1', 'MEM999', DATE '1990-01-01')")
-
-        cursor.execute("INSERT INTO ORDERS (order_id, customer_id, order_date, shipment_status) "
-                    "VALUES ('OBUY1', 'S1', DATE '2025-11-01', 'Pending')")
-
-        cursor.execute("INSERT INTO PAYMENT (payment_id, order_id, payment_status, total_amount) "
-                    "VALUES ('PAYBUY1', 'OBUY1', 'Paid', 20.00)")
-
-        cursor.execute("INSERT INTO ORDER_ITEM (order_id, product_id, quantity) "
-                    "VALUES ('OBUY1', 'P0001', 1)")
         
         # duplicate name product (query 2)
         cursor.execute("INSERT INTO PRODUCT (product_id, name_product, description_product, price, stock, seller_id, category_id) "
@@ -469,6 +452,25 @@ def select_role_view(request):
         connection = get_db_connection(user=db_user, password=db_pass)
         cursor = connection.cursor()
         
+        # Get all Customer information
+        cursor.execute("""
+            SELECT u.user_id, u.first_name || ' ' || u.last_name as full_name, 
+                   u.email, u.city, u.province
+            FROM A3_USERS u
+            JOIN USERS_CUSTOMER uc ON u.user_id = uc.customer_id
+            ORDER BY u.user_id
+        """)
+        
+        customers = []
+        for row in cursor.fetchall():
+            customers.append({
+                'user_id': row[0],
+                'full_name': row[1],
+                'email': row[2],
+                'city': row[3] or 'N/A',
+                'province': row[4] or 'N/A'
+            })
+        
         # Get all Seller information
         cursor.execute("""
             SELECT u.user_id, u.first_name || ' ' || u.last_name as full_name, 
@@ -493,11 +495,13 @@ def select_role_view(request):
         connection.close()
         
         context = {
+            'customers': customers,
             'sellers': sellers
         }
         
     except Exception as e:
         context = {
+            'customers': [],
             'sellers': [],
             'error': str(e)
         }
@@ -558,14 +562,6 @@ def dashboard_view(request):
             cursor.execute("SELECT COUNT(*) FROM ORDERS WHERE customer_id = :user_id", {'user_id': user_id})
             orders_count = cursor.fetchone()[0]
             
-            cursor.execute("""
-                SELECT COUNT(DISTINCT oi.product_id) 
-                FROM ORDERS o
-                JOIN ORDER_ITEM oi ON o.order_id = oi.order_id
-                WHERE o.customer_id = :user_id
-            """, {'user_id': user_id})
-            products_count = cursor.fetchone()[0]
-            
             cursor.execute("SELECT COUNT(*) FROM PRODUCT")
             total_products = cursor.fetchone()[0]
             
@@ -573,7 +569,6 @@ def dashboard_view(request):
                 'user_type': user_type,
                 'user_id': user_id,
                 'orders_count': orders_count,
-                'products_purchased': products_count,
                 'total_products': total_products,
                 'db_user': db_user,
             }
@@ -1254,6 +1249,13 @@ def edit_profile_view(request):
             first_name = name_parts[0]
             last_name = name_parts[1] if len(name_parts) > 1 else ''
             
+            # Handle empty values - convert empty strings to '-' to match default values
+            phone = phone if phone else '-'
+            street = street if street else '-'
+            city = city if city else '-'
+            province = province if province else '-'
+            postal_code = postal_code if postal_code else '-'
+            
             # Update A3_USERS table
             cursor.execute("""
                 UPDATE A3_USERS 
@@ -1270,11 +1272,11 @@ def edit_profile_view(request):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,
-                'phone': phone if phone else None,
-                'street': street if street else None,
-                'city': city if city else None,
-                'province': province if province else None,
-                'postal_code': postal_code if postal_code else None,
+                'phone': phone,
+                'street': street,
+                'city': city,
+                'province': province,
+                'postal_code': postal_code,
                 'user_id': user_id
             })
             
@@ -1297,6 +1299,9 @@ def edit_profile_view(request):
             return redirect('my_profile')
             
         except Exception as e:
+            connection.rollback()
+            cursor.close()
+            connection.close()
             messages.error(request, f'Error updating profile: {str(e)}')
             return redirect('my_profile')
     
