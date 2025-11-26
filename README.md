@@ -29,6 +29,8 @@ A comprehensive web-based E-Commerce Database Management System built with **Dja
    ```bash
    # Just start the server - that's it!
    python manage.py runserver
+   or
+   python3 manage.py runserver
    ```
 
 Then open your browser and visit: **http://127.0.0.1:8000/**
