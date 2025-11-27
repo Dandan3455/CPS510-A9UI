@@ -20,6 +20,10 @@ A comprehensive web-based E-Commerce Database Management System built with **Dja
 
    # 2. Initialize database
    python manage.py migrate
+   or
+   python3 manage.py migrate
+   or
+   py manage.py migrate
 
    # 3. Start the server
    python manage.py runserver
